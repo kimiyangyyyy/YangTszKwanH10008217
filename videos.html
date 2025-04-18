@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅行视频 - 旅行摄影集</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .video-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+        }
+        
+        .video-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .video-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .video-nav a.active {
+            background: #3498db;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 50px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-brand {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Microsoft YaHei', sans-serif;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-brand:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: #2c3e50;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .nav-links a:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .nav-links a:hover::before {
+            opacity: 1;
+        }
+        
+        .nav-links a.active {
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .videos-container {
+            padding: 2rem;
+            margin-top: 120px;
+            max-width: 1200px;
+            margin: 120px auto 0;
+        }
+        
+        .video-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 宽高比 */
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-info {
+            padding: 1rem;
+        }
+        
+        .video-info h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .video-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .video-controls button {
+            padding: 0.5rem 1rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .video-controls button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="video-nav">
+        <a href="index.html">
+            <i class="fas fa-film"></i>
+            <span>Wonderful Moments</span>
+        </a>
+        <a href="videos.html#video2" class="active">
+            <i class="fas fa-globe-asia"></i>
+            <span>Inspiration Journey</span>
+        </a>
+        <a href="videos.html#video3">
+            <i class="fas fa-magic"></i>
+            <span>Magical Adventure</span>
+        </a>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="nav-brand-en">Photography and Inspiration</div>
+            <div class="nav-brand-cn">自然光影的記錄者</div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">
+                <span class="nav-link-en">Portfolio</span>
+                <span class="nav-link-cn">作品展示</span>
+            </a>
+            <a href="gallery.html">
+                <span class="nav-link-en">Inspiration</span>
+                <span class="nav-link-cn">靈感集</span>
+            </a>
+            <a href="about.html">
+                <span class="nav-link-en">About</span>
+                <span class="nav-link-cn">關於我</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="videos-container">
+        <div class="video-section" id="video2">
+            <div class="video-wrapper">
+                <video controls>
+                    <source src="video/v2.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-info">
+                <h2>
+                    <span class="section-title-en">Inspiration Journey</span>
+                    <span class="section-title-cn">靈感之旅</span>
+                </h2>
+                <p>記錄了一段難忘的旅行經歷，展現了當地的自然風光和人文特色。</p>
+                <div class="video-controls">
+                    <button onclick="document.querySelector('#video2 video').play()">播放</button>
+                    <button onclick="document.querySelector('#video2 video').pause()">暫停</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="video-section" id="video3">
+            <div class="video-wrapper">
+                <video controls>
+                    <source src="video/v3.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-info">
+                <h2>
+                    <span class="section-title-en">Magical Adventure</span>
+                    <span class="section-title-cn">奇妙冒險</span>
+                </h2>
+                <p>捕捉了旅途中的精彩瞬間，展現了不同地域的獨特魅力。</p>
+                <div class="video-controls">
+                    <button onclick="document.querySelector('#video3 video').play()">播放</button>
+                    <button onclick="document.querySelector('#video3 video').pause()">暫停</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-weixin"></i></a>
+            <a href="#"><i class="fab fa-weibo"></i></a>
+        </div>
+        <p>&copy; 2025 旅行摄影集. All rights reserved.</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // 平滑滚动到视频
+        document.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            if (hash) {
+                const element = document.querySelector(hash);
+                if (element) {
+                    setTimeout(() => {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                    }, 500);
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

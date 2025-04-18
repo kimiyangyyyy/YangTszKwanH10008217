@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照片集 - 旅行摄影集</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gallery-container {
+            padding: 2rem;
+            margin-top: 80px;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .gallery-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            background: #2c3e50;
+        }
+        
+        .video-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(44, 62, 80, 0.9);
+            padding: 0.8rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .video-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            transition: all 0.4s ease;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            background: rgba(52, 152, 219, 0.2);
+        }
+        
+        .video-nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+        
+        .video-nav a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .video-nav a:hover::before {
+            opacity: 1;
+        }
+        
+        .video-nav a.active {
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            font-weight: 600;
+        }
+        
+        .video-nav a span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .video-nav a i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .video-nav a:hover i {
+            transform: rotate(360deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="nav-brand-en">Photography and Inspiration</div>
+            <div class="nav-brand-cn">自然光影的記錄者</div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">
+                <span class="nav-link-en">Portfolio</span>
+                <span class="nav-link-cn">作品展示</span>
+            </a>
+            <a href="gallery.html" class="active">
+                <span class="nav-link-en">Inspiration</span>
+                <span class="nav-link-cn">靈感集</span>
+            </a>
+            <a href="about.html">
+                <span class="nav-link-en">About</span>
+                <span class="nav-link-cn">關於我</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="gallery-container">
+        <h1 class="animate-text">
+            <span class="section-title-en">My Photography</span>
+            <span class="section-title-cn">我的攝影作品</span>
+        </h1>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="nature">光影藝術</button>
+            <button class="filter-btn" data-filter="city">創意構圖</button>
+            <button class="filter-btn" data-filter="people">情感表達</button>
+        </div>
+        
+        <div class="gallery-grid">
+            <div class="gallery-item" data-category="nature">
+                <img src="img/1.jpg" alt="光影藝術1" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>光與影</h3>
+                    <p>探索光影的無限可能</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="city">
+                <img src="img/2.jpg" alt="創意構圖1" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>視覺語言</h3>
+                    <p>構建獨特的畫面結構</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="people">
+                <img src="img/3.jpg" alt="情感表達1" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>情感瞬間</h3>
+                    <p>捕捉內心的真實感受</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="img/4.jpg" alt="光影藝術2" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>光影交織</h3>
+                    <p>展現光影的韻律之美</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="city">
+                <img src="img/5.jpg" alt="創意構圖2" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>空間構成</h3>
+                    <p>探索空間的視覺表達</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="people">
+                <img src="img/6.jpg" alt="情感表達2" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>情緒肖像</h3>
+                    <p>記錄情感的微妙變化</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="img/7.jpg" alt="光影藝術3" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>光影韻律</h3>
+                    <p>感受光影的節奏之美</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="city">
+                <img src="img/8.jpg" alt="創意構圖3" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>視覺敘事</h3>
+                    <p>用畫面講述故事</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="people">
+                <img src="img/9.jpg" alt="情感表達3" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>情感共鳴</h3>
+                    <p>觸動心靈的瞬間</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="img/10.jpg" alt="光影藝術4" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>光影意境</h3>
+                    <p>營造獨特的氛圍</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="city">
+                <img src="img/11.jpg" alt="創意構圖4" class="gallery-img">
+                <div class="gallery-overlay">
+                    <h3>視覺探索</h3>
+                    <p>發現新的視角</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="video-nav">
+        <a href="index.html">
+            <i class="fas fa-film"></i>
+            <span>精彩瞬間</span>
+        </a>
+        <a href="videos.html#video2">
+            <i class="fas fa-globe-asia"></i>
+            <span>環球之旅</span>
+        </a>
+        <a href="videos.html#video3">
+            <i class="fas fa-magic"></i>
+            <span>奇妙冒險</span>
+        </a>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-weixin"></i></a>
+            <a href="#"><i class="fab fa-weibo"></i></a>
+        </div>
+        <p>&copy; 2025 旅行摄影集. All rights reserved.</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // 照片筛选功能
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有按钮的active类
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // 添加当前按钮的active类
+                button.classList.add('active');
+                
+                const filter = button.getAttribute('data-filter');
+                
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 100);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

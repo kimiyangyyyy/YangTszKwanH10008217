@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅行摄影集</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .video-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.8rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .video-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            transition: all 0.4s ease;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .video-nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+        
+        .video-nav a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-nav a:hover::before {
+            opacity: 1;
+        }
+        
+        .video-nav a.active {
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            font-weight: 600;
+        }
+        
+        .video-nav a span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .video-nav a i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .video-nav a:hover i {
+            transform: rotate(360deg);
+        }
+        
+        .hero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .hero video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+            z-index: 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 2rem;
+        }
+        
+        .hero-content h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Microsoft YaHei', sans-serif;
+            letter-spacing: 2px;
+        }
+        
+        .hero-content p {
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Microsoft YaHei', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 50px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-brand {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Microsoft YaHei', sans-serif;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .nav-brand-en {
+            font-size: 1rem;
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 0.3rem;
+            letter-spacing: 1px;
+        }
+        
+        .nav-brand-cn {
+            font-size: 1.5rem;
+        }
+        
+        .nav-brand:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: #2c3e50;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            background: rgba(52, 152, 219, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .nav-link-en {
+            font-size: 0.8rem;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .nav-link-cn {
+            font-size: 1rem;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .nav-links a:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .nav-links a:hover::before {
+            opacity: 1;
+        }
+        
+        .nav-links a.active {
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .featured-photos {
+            padding: 4rem 2rem;
+            background: #f8f9fa;
+        }
+        
+        .featured-photos h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 3rem;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .photo-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .photo-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .photo-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .photo-card:hover .photo-img {
+            transform: scale(1.1);
+        }
+        
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-card:hover .photo-overlay {
+            transform: translateY(0);
+        }
+        
+        .photo-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 600;
+        }
+        
+        .photo-overlay p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        .explore-more {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+        }
+        
+        .explore-more h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .explore-link {
+            display: inline-block;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 1rem 2rem;
+            border: 2px solid #3498db;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-family: 'Microsoft YaHei', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .explore-link:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .explore-link i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .explore-link:hover i {
+            transform: translateX(5px);
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .page-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .page-content.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-section, .inspiration-section {
+            padding: 4rem 2rem;
+            background: #f8f9fa;
+            margin-bottom: 2rem;
+        }
+
+        .about-section h2, .inspiration-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .about-content, .inspiration-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2c3e50;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        .about-content p, .inspiration-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .about-content ul {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .about-content li {
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+
+        .about-content li::before {
+            content: "•";
+            color: #3498db;
+            font-weight: bold;
+            position: absolute;
+            left: -1.5rem;
+        }
+
+        .about-content strong {
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .hero-title-en {
+            font-size: 2rem;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title-cn {
+            font-size: 3rem;
+        }
+
+        .section-title-en {
+            font-size: 1.2rem;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #3498db;
+        }
+
+        .section-title-cn {
+            font-size: 2.5rem;
+            display: block;
+        }
+
+        h2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="video-nav">
+        <a href="index.html" class="active">
+            <i class="fas fa-film"></i>
+            <span>Wonderful Moments</span>
+        </a>
+        <a href="videos.html#video2">
+            <i class="fas fa-globe-asia"></i>
+            <span>Inspiration Journey</span>
+        </a>
+        <a href="videos.html#video3">
+            <i class="fas fa-magic"></i>
+            <span>Magical Adventure</span>
+        </a>
+    </div>
+
+    <div class="page-content">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <div class="nav-brand-en">Photography and Inspiration</div>
+                <div class="nav-brand-cn">風光攝影的記錄者</div>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active">
+                    <span class="nav-link-en">Portfolio</span>
+                    <span class="nav-link-cn">作品展示</span>
+                </a>
+                <a href="gallery.html">
+                    <span class="nav-link-en">Inspiration</span>
+                    <span class="nav-link-cn">靈感集</span>
+                </a>
+                <a href="about.html">
+                    <span class="nav-link-en">About</span>
+                    <span class="nav-link-cn">關於我</span>
+                </a>
+            </div>
+        </nav>
+
+        <header class="hero">
+            <video autoplay muted loop playsinline>
+                <source src="video/v1.mp4" type="video/mp4">
+            </video>
+            <div class="hero-content">
+                <h1 class="animate-text">
+                    <span class="hero-title-en">Photography and Inspiration</span>
+                    <span class="hero-title-cn">自然光影的記錄者</span>
+                </h1>
+                <p class="animate-text">創作 · 表達 · 分享</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="about-section">
+                <h2>
+                    <span class="section-title-en">About Me</span>
+                    <span class="section-title-cn">關於我</span>
+                </h2>
+                <div class="about-content">
+                    <p>我是追逐山川呼吸的攝影師，用鏡頭收藏天地間的詩意瞬間。</p>
+                    <p>在四姑娘山的雪線之上，用長曝光凝固冰川的藍色心跳；於大理的麥浪之間，借微距捕捉陽光碎裂的量子態。</p>
+                    <p>我的照片沒有過度修飾的濾鏡，只有：</p>
+                    <ul>
+                        <li>黎明前凍僵手指按下的快門</li>
+                        <li>暴雨將至時草甸翻湧的金屬光澤</li>
+                        <li>牧民皺紋裡沉澱的高原日光</li>
+                    </ul>
+                    <p><strong>拍攝理念：</strong></p>
+                    <p>讓風霜雨雪在畫面中自然生長，</p>
+                    <p>把地理座標寫成所有人都能讀懂的光影散文。</p>
+                </div>
+            </section>
+
+            <section class="featured-photos">
+                <h2>
+                    <span class="section-title-en">Inspiration Journey</span>
+                    <span class="section-title-cn">靈感之旅</span>
+                </h2>
+                <div class="photo-grid">
+                    <div class="photo-card">
+                        <img src="img/1.jpg" alt="攝影作品1" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>光影藝術</h3>
+                            <p>捕捉光與影的完美結合</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/2.jpg" alt="攝影作品2" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>創意構圖</h3>
+                            <p>展現獨特的視覺語言</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/3.jpg" alt="攝影作品3" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>情感表達</h3>
+                            <p>用影像訴說內心故事</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/4.jpg" alt="攝影作品4" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>自然之美</h3>
+                            <p>記錄大自然的鬼斧神工</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/5.jpg" alt="攝影作品5" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>光影交織</h3>
+                            <p>捕捉瞬間的永恆</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/6.jpg" alt="攝影作品6" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>意境深遠</h3>
+                            <p>展現心靈的共鳴</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/7.jpg" alt="攝影作品7" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>光影詩篇</h3>
+                            <p>書寫自然的詩意</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/8.jpg" alt="攝影作品8" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>瞬間永恆</h3>
+                            <p>定格最美的瞬間</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/9.jpg" alt="攝影作品9" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>光影交響</h3>
+                            <p>演繹自然的樂章</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/10.jpg" alt="攝影作品10" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>意境深遠</h3>
+                            <p>展現心靈的共鳴</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/11.jpg" alt="攝影作品11" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>光影藝術</h3>
+                            <p>捕捉光與影的完美結合</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/12.jpg" alt="攝影作品12" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>創意構圖</h3>
+                            <p>展現獨特的視覺語言</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/13.jpg" alt="攝影作品13" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>情感表達</h3>
+                            <p>用影像訴說內心故事</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/14.jpg" alt="攝影作品14" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>自然之美</h3>
+                            <p>記錄大自然的鬼斧神工</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/15.jpg" alt="攝影作品15" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>光影交織</h3>
+                            <p>捕捉瞬間的永恆</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/16.jpg" alt="攝影作品16" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>意境深遠</h3>
+                            <p>展現心靈的共鳴</p>
+                        </div>
+                    </div>
+                    <div class="photo-card">
+                        <img src="img/17.jpg" alt="攝影作品17" class="photo-img">
+                        <div class="photo-overlay">
+                            <h3>光影詩篇</h3>
+                            <p>書寫自然的詩意</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="inspiration-section">
+                <h2>
+                    <span class="section-title-en">Creative Process</span>
+                    <span class="section-title-cn">靈感之旅</span>
+                </h2>
+                <div class="inspiration-content">
+                    <p>在風光拍攝的鏡頭裡，我開啟了這場尋覓靈感的旅途。</p>
+                    <p>當鏡頭對準那片波光粼粼的湖面，陽光穿透雲層，放射出萬道光芒，灑在澄澈的水面上，每一道光線都被精準捕捉，明暗對比間，光影的魅力盡顯無遺。遠處的建築與蔥鬱的樹木構成了富有層次感的畫面，仿佛在訴說著寧靜與悠遠。</p>
+                    <p>而那些廣袤的山丘與草地，我運用廣角鏡頭，將大地的遼闊與壯美收納其中。枯黃與翠綠交織的色塊，錯落有致的樹木，還有那縹緲的雲霧，營造出一種大氣磅礴又不失詩意的氛圍。前景與背景的巧妙搭配，讓畫面極具縱深感，仿佛觀者也置身於這片廣袤天地間。</p>
+                    <p>再看那被雲霧繚繞的山巒和村莊，我通過長焦鏡頭捕捉到了那些細膩的景致。雲霧的虛實變化，樹木的清晰紋理，以及房屋的質樸模樣，都在畫面中一一呈現。每一次按動快門，都是在定格自然的靈動瞬間，每一幅畫面都蘊含著無盡的靈感源泉。</p>
+                    <p>在這場風光拍攝的靈感之旅中，我沉醉於自然的鬼斧神工，用鏡頭記錄下每一處觸動心靈的美景，讓這些瞬間成為永恆的創作寶藏。</p>
+                </div>
+            </section>
+
+            <section class="explore-more">
+                <h2>
+                    <span class="section-title-en">Explore More</span>
+                    <span class="section-title-cn">探索更多靈感</span>
+                </h2>
+                <a href="gallery.html" class="explore-link">
+                    瀏覽全部作品
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </section>
+        </main>
+
+        <footer>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-weixin"></i></a>
+                <a href="#"><i class="fab fa-weibo"></i></a>
+            </div>
+            <p>&copy; 2025 攝影作品和我的靈感</p>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.loader').style.opacity = '0';
+                document.querySelector('.loader').style.visibility = 'hidden';
+                document.querySelector('.page-content').classList.add('loaded');
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 
